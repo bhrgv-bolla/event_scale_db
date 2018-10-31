@@ -69,7 +69,9 @@ public class EventConsumer {
         log.info("queried rows: {}", rows);
         log.info("~~~~~~~~~~~~~~~~~~~Time Taken: {} ms~~~~~~~~~~~~~~~~~~~~", stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
-        server.close();
+
+        log.info("Local to this node: {}", indexer.localDims());
+//        server.close();
 
     }
 

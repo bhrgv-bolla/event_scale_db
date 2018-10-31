@@ -7,7 +7,7 @@ public class IDProvider {
     private IdGenerator idGenerator;
 
     IDProvider(Server server) {
-        idGenerator = server.hz().getIdGenerator("rowId");
+        idGenerator = server.hz().getFlakeIdGenerator("rowId");
     }
 
     /**

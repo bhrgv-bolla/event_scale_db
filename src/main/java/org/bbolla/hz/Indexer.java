@@ -65,4 +65,14 @@ public class Indexer {
         if(rowIds == null) return Sets.newHashSet(); //dim doesn't exist yet / may be not indexed?.
         return Sets.newHashSet(rowIds);
     }
+
+    Map<String, Set<String>> localDims() {
+        Map<String, Set<String>> dimensionVal = Maps.newHashMap();
+        dimensionsMap.forEach(
+                (k, v) -> {
+                    dimensionVal.put(k, v.localKeySet());
+                }
+        );
+        return dimensionVal;
+    }
 }

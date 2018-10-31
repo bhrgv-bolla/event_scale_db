@@ -1,5 +1,7 @@
 package org.bbolla.hz;
 
+import com.hazelcast.config.Config;
+import com.hazelcast.config.FlakeIdGeneratorConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +16,9 @@ public class Server implements AutoCloseable {
     private static Server server;
 
     private Server() {
-        instance = Hazelcast.newHazelcastInstance();
+        Config config = new Config()
+                .addFlakeIdGeneratorConfig(new FlakeIdGeneratorConfig("rowId").setPrefetchCount(5));
+        instance = Hazelcast.newHazelcastInstance(config);
         //TODO may be unnecessary to use this hook.
         Runtime.getRuntime().addShutdownHook(
                 new Thread(() -> {

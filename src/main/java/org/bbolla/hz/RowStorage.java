@@ -1,9 +1,11 @@
 package org.bbolla.hz;
 
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import com.hazelcast.core.IMap;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,13 +23,13 @@ public class RowStorage {
         this.rowMap = server.hz().getMap("rowMap");
     }
 
-    Set<String> getRows(Set<Long> ids) {
+    List<String> getRows(Set<Long> ids) {
         if (ids.size() > 1000) {
             throw new UnsupportedOperationException("Currently max rows that can be retrieved are 1000 |" +
                     " narrow your search; requested : " + 1000);
         }
         Map<Long, String> result = rowMap.getAll(ids);
-        return Sets.newHashSet(result.values());
+        return Lists.newArrayList(result.values());
     }
 
     void save(Long rowId, String row, String[] partitionKey) {

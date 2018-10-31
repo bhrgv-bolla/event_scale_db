@@ -1,10 +1,14 @@
 package org.bbolla.hz;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class EventConsumer {
@@ -30,26 +34,40 @@ public class EventConsumer {
         RowStorage rowStorage = new RowStorage(server);
         IDProvider idProvider = new IDProvider(server);
         EventConsumer eventConsumer = new EventConsumer(indexer, rowStorage, idProvider);
+        QueryEngine queryEngine = new QueryEngine(indexer, rowStorage);
 
         //using event consumer
+        Stopwatch stopwatch = Stopwatch.createUnstarted();
         Map<String, String> event = Maps.newHashMap();
         event.put("dim1", "dim1val1");
         event.put("dim2", "dim2val1");
         event.put("dim3", "dim3val1");
         event.put("dim4", "dim4val1");
-        //consume the record
-        eventConsumer.consume(new Record(event, Sets.newHashSet()));
+
         Map<String, String> event2 = Maps.newHashMap();
         event2.put("dim1", "dim1val3");
-        event2.put("dim2", "dim2val3");
+        event2.put("dim2", "dim2val1");
         event2.put("dim3", "dim3val3");
+
+        //prepare query
+        Map<String, String> filters = Maps.newHashMap();
+        filters.put("dim2", "dim2val1");
+
+        stopwatch.start();
+        //results
+        //consume the record
+        eventConsumer.consume(new Record(event, Sets.newHashSet()));
         eventConsumer.consume(new Record(event2, Sets.newHashSet()));
+        List<String> rows = queryEngine.getRows(filters);
+        Set<String> dims = dm.dimensions();
+        Object rowIdxs = indexer.getRows("dim2", "dim2val1");
 
-        log.info("All dimensions : {}", dm.dimensions());
+        stopwatch.stop();
 
-        log.info("indexes : {}", indexer.getRows("dim1", "dim1val1"));
-
-        log.info("rows: {}", rowStorage.getRows(Sets.newHashSet(1L, 2L)));
+        log.info("All dimensions : {}", dims);
+        log.info("indexes : {}", rowIdxs);
+        log.info("queried rows: {}", rows);
+        log.info("~~~~~~~~~~~~~~~~~~~Time Taken: {} ms~~~~~~~~~~~~~~~~~~~~", stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
         server.close();
 

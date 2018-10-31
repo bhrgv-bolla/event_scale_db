@@ -11,9 +11,7 @@ public class Server implements AutoCloseable {
 
     private static HazelcastInstance instance;
 
-    static {
-        new Server();
-    }
+    private static Server server;
 
     private Server() {
         instance = Hazelcast.newHazelcastInstance();
@@ -25,11 +23,6 @@ public class Server implements AutoCloseable {
                 })
         );
     }
-
-    public final static HazelcastInstance getInstance() {
-        return instance;
-    }
-
 
     public static void main(String[] args) {
         Map<String, String> aMap = instance.getMap("aMap");
@@ -43,6 +36,15 @@ public class Server implements AutoCloseable {
 
         //Important to close
         System.exit(0);
+    }
+
+    final static Server getInstance() {
+        if (server == null) server = new Server();
+        return server;
+    }
+
+    final HazelcastInstance hz() {
+        return instance;
     }
 
     @Override

@@ -31,7 +31,7 @@ public class DimensionManager {
      *
      * @return
      */
-    Set<String> dimensions() {
+    public Set<String> dimensions() {
         return Sets.newHashSet(dimensionsMap.keySet());
     }
 

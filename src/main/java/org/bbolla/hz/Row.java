@@ -1,6 +1,6 @@
 package org.bbolla.hz;
 
-import lombok.*;
+import lombok.Value;
 
 @Value
 public class Row { //make it immutable once created.
